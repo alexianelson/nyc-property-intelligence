@@ -18,7 +18,7 @@
 <div class="sectionhead"><div><h3>Property snapshot</h3><p>Attributes returned by the public dataset — not independently certified.</p></div><span class="source">NYC PLUTO</span></div>
 <div class="grid"><div class="metric"><div class="label">Lot area</div><div class="value" id="lotArea">—</div><div class="sub">square feet</div></div><div class="metric"><div class="label">Building area</div><div class="value" id="bldgArea">—</div><div class="sub">reported gross square feet</div></div><div class="metric"><div class="label">Reported floors</div><div class="value" id="floors">—</div><div class="sub">existing building</div></div><div class="metric"><div class="label">Built FAR</div><div class="value" id="builtFar">—</div><div class="sub">reported built floor area ratio</div></div></div>
 <div class="card"><div class="detailgrid" id="propertyDetails"></div><div class="fine" style="margin-top:12px" id="propertySource"></div></div>
-<section class="section"><div class="sectionhead"><div><h3>Comparable sale screen</h3><p>Recent recorded transactions with price and reported gross building area; filtered for approximate size where available.</p></div><span class="source">NYC Rolling Sales</span></div><div class="grid"><div class="metric"><div class="label">Transactions shown</div><div class="value" id="compCount">—</div><div class="sub">after screening filters</div></div><div class="metric"><div class="label">Median $ / SF</div><div class="value" id="medianPsf">—</div><div class="sub">not an appraisal</div></div><div class="metric"><div class="label">Median sale price</div><div class="value" id="medianPrice">—</div><div class="sub">reported sale price</div></div><div class="metric"><div class="label">Data window</div><div class="value" style="font-size:18px" id="dataWindow">—</div><div class="sub">dates among displayed records</div></div></div><div class="tablewrap" id="compsTable"><div class="empty">Run a property search to load comparable transactions.</div></div><p class="fine">Transactions are screened from available public fields; this is not a verified arm’s-length comp set. Property type, condition, unit mix, concessions, and legal area may differ. Outliers and transfers requiring exclusion must be reviewed manually.</p></section>
+<section class="section"><div class="sectionhead"><div><h3>Comparable sale screen</h3><p>Recent recorded transactions with price and reported gross building area; filtered for approximate size where available.</p></div><span class="source">NYC Rolling Sales</span></div><div class="grid"><div class="metric"><div class="label">Transactions shown</div><div class="value" id="compCount">—</div><div class="sub">after screening filters</div></div><div class="metric"><div class="label">Median $ / SF</div><div class="value" id="medianPsf">—</div><div class="sub">not an appraisal</div></div><div class="metric"><div class="label">Median sale price</div><div class="value" id="medianPrice">—</div><div class="sub">reported sale price</div></div><div class="metric"><div class="label">Data window</div><div class="value" style="font-size:18px" id="dataWindow">—</div><div class="sub">dates among displayed records</div></div></div><p class="fine" id="compMethodology">Comparable-sale screening methodology will appear here.</p><div class="tablewrap" id="compsTable"><div class="empty">Run a property search to load comparable transactions.</div></div><p class="fine">Transactions are screened from available public fields; this is not a verified arm’s-length comp set. Property type, condition, unit mix, concessions, and legal area may differ. Outliers and transfers requiring exclusion must be reviewed manually.</p></section>
 <section class="section"><div class="sectionhead"><div><h3>Development residual land value — quick screen</h3><p>Enter your own assumptions. This is a simplified feasibility calculation, not a construction budget or financing quote.</p></div></div><div class="split"><div class="card"><div class="inputs3"><div class="field"><label for="sellable">Sellable / rentable area (SF)</label><input id="sellable" type="number" min="0" placeholder="e.g. 18000"></div><div class="field"><label for="revenue">Value per SF ($)</label><input id="revenue" type="number" min="0" placeholder="e.g. 900"></div><div class="field"><label for="hard">Hard cost ($ / SF)</label><input id="hard" type="number" min="0" placeholder="e.g. 350"></div><div class="field"><label for="soft">Soft costs (% of hard)</label><input id="soft" type="number" min="0" value="25"></div><div class="field"><label for="finance">Financing & carry ($)</label><input id="finance" type="number" min="0" placeholder="e.g. 1200000"></div><div class="field"><label for="other">Other costs + contingency ($)</label><input id="other" type="number" min="0" placeholder="e.g. 800000"></div><div class="field"><label for="profit">Target developer profit (% of revenue)</label><input id="profit" type="number" min="0" value="15"></div><div class="field"><label for="acq">Acquisition / closing costs ($)</label><input id="acq" type="number" min="0" placeholder="e.g. 500000"></div></div><button class="primary" style="margin-top:14px;width:100%" id="calcBtn" type="button">Calculate residual land value</button></div><div class="card"><div class="eyebrow">Indicative residual</div><div class="calcresult" id="residual">Enter assumptions</div><p id="residualNote" class="fine">Residual land value = estimated completed value minus hard costs, soft costs, financing/carry, other costs, target profit, and acquisition/closing costs. Results are only as reliable as your inputs.</p><div class="detail" style="margin-top:15px"><div class="k">Estimated completed value</div><div class="v" id="grossValue">—</div></div><div class="detail"><div class="k">Estimated project costs before land</div><div class="v" id="projectCost">—</div></div><div class="detail"><div class="k">Target profit allowance</div><div class="v" id="profitValue">—</div></div></div></div></section>
 </section>
 <div class="footer"><span>NYC Property Intelligence · Preliminary diligence workspace</span><span><a href="https://opendata.cityofnewyork.us/" target="_blank" rel="noopener">NYC Open Data</a> · <a href="https://www.nyc.gov/site/planning/data-maps/open-data/dwn-pluto-mappluto.page" target="_blank" rel="noopener">PLUTO documentation</a></span></div>
@@ -80,25 +80,50 @@ function showProperty(p){
 }
 const median=a=>{const v=a.filter(Number.isFinite).sort((x,y)=>x-y);if(!v.length)return NaN;const m=Math.floor(v.length/2);return v.length%2?v[m]:(v[m-1]+v[m])/2};
 function renderSales(rows,p){
- const propArea=num(p.bldgarea);const propBbl=String(p.bbl||'');const borough=String(p.borough||p.boro||'').toUpperCase();
- const sales=rows.map(r=>({...r,_price:num(r.sale_price),_sf:num(r.gross_square_feet),_date:r.sale_date,_bbl:bblFromRow(r)}))
- .filter(r=>r._price>1000&&r._sf>100&&r._date&&r._bbl!==propBbl);
- let comps=sales.filter(r=>!Number.isFinite(propArea)||propArea<=0||(r._sf>=propArea*.5&&r._sf<=propArea*2));
- const propN=String(p.neighborhood||'').toUpperCase();
- if(propN){const same=comps.filter(r=>String(r.neighborhood||'').toUpperCase()===propN);if(same.length>=3)comps=same}
+ const propArea=num(p.bldgarea),propBbl=String(p.bbl||'').padStart(10,'0');
+ const propN=String(p.neighborhood||'').toUpperCase().trim();
+ const all=rows.map(r=>({...r,_price:num(r.sale_price),_sf:num(r.gross_square_feet),_date:r.sale_date,_bbl:bblFromRow(r),_hood:String(r.neighborhood||'').toUpperCase().trim()}))
+  .filter(r=>r._price>1000&&r._sf>100&&r._date&&r._bbl!==propBbl);
+ let comps=[],method='';
+ const validArea=Number.isFinite(propArea)&&propArea>100;
+ if(validArea){
+   comps=all.filter(r=>r._sf>=propArea*.5&&r._sf<=propArea*2);
+   method='Initial screen: same borough, reported gross area between 50% and 200% of subject area; nominal transfers and records without usable sale price/area excluded.';
+   if(propN){const same=comps.filter(r=>r._hood===propN);if(same.length>=3){comps=same;method+=' Neighborhood refined to '+p.neighborhood+'.';}}
+   if(comps.length<5){
+     const wider=all.filter(r=>r._sf>=propArea*.25&&r._sf<=propArea*4);
+     if(wider.length>comps.length){comps=wider;method='Expanded screen: same borough, reported gross area between 25% and 400% of subject area because the tighter screen returned fewer than five records.';}
+   }
+   if(comps.length<5&&all.length>comps.length){
+     comps=all;
+     method='Broad fallback: same-borough sales with usable sale price and gross area. Size filter relaxed because fewer than five transactions passed tighter screens; review property type and size carefully.';
+   }
+ }else{
+   comps=all;
+   method='Broad fallback: subject building area is missing or too small for a building-size match. Showing same-borough sales with usable price and gross area; these are not land comps and should not be used to value a vacant lot.';
+ }
  comps.sort((a,b)=>String(b._date).localeCompare(String(a._date)));comps=comps.slice(0,50);currentSales=comps;
- const psf=comps.map(r=>r._price/r._sf);$('compCount').textContent=fmt(comps.length);$('medianPsf').textContent=Number.isFinite(median(psf))?money(median(psf)):'—';$('medianPrice').textContent=Number.isFinite(median(comps.map(r=>r._price)))?money(median(comps.map(r=>r._price))):'—';
- const dates=comps.map(r=>String(r._date).slice(0,10)).filter(Boolean).sort();$('dataWindow').textContent=dates.length?dates[0]+' → '+dates[dates.length-1]:'No records';
- if(!comps.length){$('compsTable').innerHTML='<div class="empty">No comparable transactions passed the available screening filters. Try a borough selection, another address/BBL, or review the dataset directly.</div>';return}
+ $('compCount').textContent=fmt(comps.length);
+ const psf=comps.map(r=>r._price/r._sf),prices=comps.map(r=>r._price);
+ $('medianPsf').textContent=Number.isFinite(median(psf))?money(median(psf)):'—';
+ $('medianPrice').textContent=Number.isFinite(median(prices))?money(median(prices)):'—';
+ const dates=comps.map(r=>String(r._date).slice(0,10)).filter(Boolean).sort();
+ $('dataWindow').textContent=dates.length?dates[0]+' → '+dates[dates.length-1]:'No records';
+ const methodEl=$('compMethodology');
+ if(methodEl)methodEl.textContent=method+' Source: NYC Rolling Calendar Sales, a rolling 12-month dataset; not a verified arm’s-length comp set.';
+ if(!comps.length){$('compsTable').innerHTML='<div class="empty">No usable sales were returned for this borough. Check the dataset connection or try again later. The current source is a rolling 12-month sales dataset, so it may not contain suitable transactions for every property type.</div>';return}
  $('compsTable').innerHTML='<table><thead><tr><th>Sale date</th><th>Address</th><th>Neighborhood</th><th>Sale price</th><th>Gross SF</th><th>$/SF</th><th>Class</th><th>BBL</th></tr></thead><tbody>'+comps.map(r=>'<tr><td>'+esc(String(r._date).slice(0,10))+'</td><td>'+esc(r.address)+'</td><td>'+esc(r.neighborhood)+'</td><td>'+money(r._price)+'</td><td>'+fmt(r._sf)+'</td><td>'+money(r._price/r._sf)+'</td><td>'+esc(r.building_class_category||r.building_class_at_time_of_sale||'—')+'</td><td>'+esc(r._bbl||'—')+'</td></tr>').join('')+'</tbody></table>';
 }
 async function findSales(p,boroughChoice){
- let borough=String(boroughChoice||p.borough||p.boro||'').toUpperCase();
- const boroMap={'1':'MANHATTAN','2':'BRONX','3':'BROOKLYN','4':'QUEENS','5':'STATEN ISLAND','MN':'MANHATTAN','BX':'BRONX','BK':'BROOKLYN','QN':'QUEENS','SI':'STATEN ISLAND'};
- if(boroMap[borough])borough=boroMap[borough];
- let where="sale_price > '0' AND gross_square_feet > '100'";
- if(borough)where+=" AND borough='"+quote(borough)+"'";
- const rows=await api(SALES,{'$where':where,'$select':'borough,neighborhood,building_class_category,building_class_at_time_of_sale,block,lot,address,zip_code,gross_square_feet,sale_price,sale_date','$order':'sale_date DESC','$limit':2000});
+ const boroughNames={'1':'MANHATTAN','2':'BRONX','3':'BROOKLYN','4':'QUEENS','5':'STATEN ISLAND','MN':'MANHATTAN','BX':'BRONX','BK':'BROOKLYN','QN':'QUEENS','SI':'STATEN ISLAND','MANHATTAN':'MANHATTAN','BRONX':'BRONX','BROOKLYN':'BROOKLYN','QUEENS':'QUEENS','STATEN ISLAND':'STATEN ISLAND'};
+ const boroughCodes={'MANHATTAN':'1','BRONX':'2','BROOKLYN':'3','QUEENS':'4','STATEN ISLAND':'5'};
+ let selected=String(boroughChoice||p.borough||p.boro||'').toUpperCase().trim();
+ if(boroughNames[selected])selected=boroughNames[selected];
+ const code=boroughCodes[selected]||'';
+ let where="sale_price > 1000 AND gross_square_feet > 100";
+ // Rolling Sales stores borough as the numeric DOF code (1–5), not the borough name.
+ if(code)where+=" AND borough='"+code+"'";
+ const rows=await api(SALES,{'$where':where,'$select':'borough,neighborhood,building_class_category,building_class_at_time_of_sale,block,lot,address,zip_code,gross_square_feet,land_square_feet,residential_units,total_units,year_built,sale_price,sale_date','$order':'sale_date DESC','$limit':5000});
  renderSales(rows,p);
 }
 $('searchForm').addEventListener('submit',async e=>{
