@@ -116,12 +116,14 @@ function renderSales(rows,p){
 }
 async function findSales(p,boroughChoice){
  const boroughNames={'1':'MANHATTAN','2':'BRONX','3':'BROOKLYN','4':'QUEENS','5':'STATEN ISLAND','MN':'MANHATTAN','BX':'BRONX','BK':'BROOKLYN','QN':'QUEENS','SI':'STATEN ISLAND','MANHATTAN':'MANHATTAN','BRONX':'BRONX','BROOKLYN':'BROOKLYN','QUEENS':'QUEENS','STATEN ISLAND':'STATEN ISLAND'};
+ const boroughCodes={'MANHATTAN':'1','BRONX':'2','BROOKLYN':'3','QUEENS':'4','STATEN ISLAND':'5'};
  let selected=String(boroughChoice||p.borough||p.boro||'').toUpperCase().trim();
  if(boroughNames[selected])selected=boroughNames[selected];
+ const code=boroughCodes[selected]||'';
  let where="sale_price > 1000 AND gross_square_feet > 100";
- // Official Rolling Sales schema stores borough as a text borough name.
- if(selected)where+=" AND upper(borough)='"+quote(selected)+"'";
- // Omit a hard-coded SELECT list so a stale field name cannot fail the entire request.
+ // Dataset rows use borough codes 1–5 even though the schema describes this field as text.
+ if(code)where+=" AND borough='"+code+"'";
+ // Omit a hard-coded SELECT list so one stale field name cannot fail the entire request.
  const rows=await api(SALES,{'$where':where,'$order':'sale_date DESC','$limit':5000});
  renderSales(rows,p);
 }
