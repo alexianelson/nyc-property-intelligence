@@ -51,7 +51,7 @@ async function findProperty(term,borough){
  const seen=new Set();
  for(const variant of variants){
    if(seen.has(variant))continue;seen.add(variant);
-   const clauses=["address like '%"+quote(variant)+"%'"];
+   const clauses=["upper(address) like '%"+quote(variant)+"%'"];
    if(boroughCode)clauses.push("borough='"+quote(boroughCode)+"'");
    const rows=await api(PLUTO,{'$where':clauses.join(' AND '),'$limit':20,'$order':'bbl'});
    if(rows.length)return rows;
@@ -61,7 +61,7 @@ async function findProperty(term,borough){
  if(m){
    const tokens=m[2].split(/\s+/).filter(t=>t.length>2&&!['THE','OF','AND'].includes(t));
    for(const token of tokens){
-     const clauses=["address like '%"+quote(m[1])+"%'","address like '%"+quote(token)+"%'"];
+     const clauses=["upper(address) like '%"+quote(m[1])+"%'","upper(address) like '%"+quote(token)+"%'"];
      if(boroughCode)clauses.push("borough='"+quote(boroughCode)+"'");
      const rows=await api(PLUTO,{'$where':clauses.join(' AND '),'$limit':20,'$order':'bbl'});
      if(rows.length)return rows;
@@ -106,7 +106,7 @@ $('searchForm').addEventListener('submit',async e=>{
  $('searchBtn').disabled=true;$('searchBtn').textContent='Searching…';$('status').textContent='Querying NYC public datasets…';$('results').classList.add('hide');
  try{
   const props=await findProperty(term,$('borough').value);
-  if(!props.length)throw new Error('No matching PLUTO record was found. Try the full street address with borough, or the 10-digit BBL. A failed match does not mean the property is absent from city records.');
+  if(!props.length)throw new Error('No matching PLUTO record was found for “'+term+'”. Try the 10-digit BBL (digits only), or enter just the street number and street name without the borough. A failed match does not mean the property is absent from city records.');
   const p=props[0];showProperty(p);
   $('status').textContent=props.length>1?'Multiple PLUTO matches found ('+props.length+'); displaying the first returned match. Confirm the BBL before relying on the result.':'Property record loaded. Confirm the address and BBL below before proceeding.';
   await findSales(p,$('borough').value);
