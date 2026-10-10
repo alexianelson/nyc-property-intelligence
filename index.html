@@ -43,7 +43,7 @@ function pick(r,keys){for(const k of keys)if(r[k]!==undefined&&r[k]!==null&&r[k]
 async function findProperty(term,borough){
  const digits=term.replace(/\D/g,'');const isBBL=/^\d{10}$/.test(digits);
  if(isBBL){const a=await api(PLUTO,{'$where':'bbl='+digits,'$limit':10});if(a.length)return a;return [];}
- const addr=cleanAddress(term).replace(/[^A-Z0-9 -]/g,' ').replace(/\s+/g,' ').trim();
+ const addr=cleanAddress(term).replace(/[^A-Z0-9 -]/g,' ').replace(/\s+/g,' ').trim().replace(/\s+(BROOKLYN|MANHATTAN|QUEENS|BRONX|STATEN ISLAND)(\s+NEW YORK)?$/,'').replace(/\s+NEW YORK(\s+NY)?$/,'').replace(/\s+NY$/,'').trim();
  const boroughCode=borough?BOROUGH_CODE[borough.toUpperCase()]||borough.toUpperCase():'';
  const variants=[addr];
  const suffixes=[['PARKWAY','PKWY'],['AVENUE','AVE'],['STREET','ST'],['BOULEVARD','BLVD'],['ROAD','RD'],['DRIVE','DR'],['PLACE','PL'],['TERRACE','TER'],['LANE','LN'],['COURT','CT'],['HIGHWAY','HWY'],['TURNPIKE','TPKE']];
