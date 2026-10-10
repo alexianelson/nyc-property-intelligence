@@ -112,18 +112,17 @@ function renderSales(rows,p){
  const methodEl=$('compMethodology');
  if(methodEl)methodEl.textContent=method+' Source: NYC Rolling Calendar Sales, a rolling 12-month dataset; not a verified arm’s-length comp set.';
  if(!comps.length){$('compsTable').innerHTML='<div class="empty">No usable sales were returned for this borough. Check the dataset connection or try again later. The current source is a rolling 12-month sales dataset, so it may not contain suitable transactions for every property type.</div>';return}
- $('compsTable').innerHTML='<table><thead><tr><th>Sale date</th><th>Address</th><th>Neighborhood</th><th>Sale price</th><th>Gross SF</th><th>$/SF</th><th>Land SF</th><th>Year built</th><th>Res. units</th><th>Class category</th><th>BBL</th></tr></thead><tbody>'+comps.map(r=>'<tr><td>'+esc(String(r._date).slice(0,10))+'</td><td>'+esc(r.address)+'</td><td>'+esc(r.neighborhood)+'</td><td>'+money(r._price)+'</td><td>'+fmt(r._sf)+'</td><td>'+money(r._price/r._sf)+'</td><td>'+fmt(num(r.land_square_feet))+'</td><td>'+esc(r.year_built||'—')+'</td><td>'+esc(r.residential_units??'—')+'</td><td>'+esc(r.building_class_category||r.building_class_at_present||r.building_class_at_time_of_sale||'—')+'</td><td>'+esc(r._bbl||'—')+'</td></tr>').join('')+'</tbody></table>';
+ $('compsTable').innerHTML='<table><thead><tr><th>Sale date</th><th>Address</th><th>Neighborhood</th><th>Sale price</th><th>Gross SF</th><th>$/SF</th><th>Land SF</th><th>Year built</th><th>Res. units</th><th>Class category</th><th>BBL</th></tr></thead><tbody>'+comps.map(r=>'<tr><td>'+esc(String(r._date).slice(0,10))+'</td><td>'+esc(r.address)+'</td><td>'+esc(r.neighborhood)+'</td><td>'+money(r._price)+'</td><td>'+fmt(r._sf)+'</td><td>'+money(r._price/r._sf)+'</td><td>'+fmt(num(r.land_square_feet))+'</td><td>'+esc(r.year_built||'—')+'</td><td>'+esc(r.residential_units??'—')+'</td><td>'+esc(r.building_class_category||r.building_class_at_present||r.building_class_at_time_of||'—')+'</td><td>'+esc(r._bbl||'—')+'</td></tr>').join('')+'</tbody></table>';
 }
 async function findSales(p,boroughChoice){
  const boroughNames={'1':'MANHATTAN','2':'BRONX','3':'BROOKLYN','4':'QUEENS','5':'STATEN ISLAND','MN':'MANHATTAN','BX':'BRONX','BK':'BROOKLYN','QN':'QUEENS','SI':'STATEN ISLAND','MANHATTAN':'MANHATTAN','BRONX':'BRONX','BROOKLYN':'BROOKLYN','QUEENS':'QUEENS','STATEN ISLAND':'STATEN ISLAND'};
- const boroughCodes={'MANHATTAN':'1','BRONX':'2','BROOKLYN':'3','QUEENS':'4','STATEN ISLAND':'5'};
  let selected=String(boroughChoice||p.borough||p.boro||'').toUpperCase().trim();
  if(boroughNames[selected])selected=boroughNames[selected];
- const code=boroughCodes[selected]||'';
  let where="sale_price > 1000 AND gross_square_feet > 100";
- // Rolling Sales stores borough as the numeric DOF code (1–5), not the borough name.
- if(code)where+=" AND borough='"+code+"'";
- const rows=await api(SALES,{'$where':where,'$select':'borough,neighborhood,building_class_category,building_class_at_present,building_class_at_time_of_sale,block,lot,address,zip_code,gross_square_feet,land_square_feet,residential_units,commercial_units,total_units,year_built,sale_price,sale_date','$order':'sale_date DESC','$limit':5000});
+ // Official Rolling Sales schema stores borough as a text borough name.
+ if(selected)where+=" AND upper(borough)='"+quote(selected)+"'";
+ // Omit a hard-coded SELECT list so a stale field name cannot fail the entire request.
+ const rows=await api(SALES,{'$where':where,'$order':'sale_date DESC','$limit':5000});
  renderSales(rows,p);
 }
 $('searchForm').addEventListener('submit',async e=>{
@@ -140,7 +139,7 @@ $('searchForm').addEventListener('submit',async e=>{
 });
 $('exportComps').addEventListener('click',()=>{
  if(!currentSales.length){$('status').textContent='No comparable sales are currently displayed to export.';return}
- const cols=[['sale_date',r=>String(r._date||'').slice(0,10)],['address',r=>r.address],['borough',r=>r.borough],['neighborhood',r=>r.neighborhood],['sale_price',r=>r._price],['gross_square_feet',r=>r._sf],['price_per_gross_sf',r=>r._price/r._sf],['land_square_feet',r=>r.land_square_feet],['year_built',r=>r.year_built],['residential_units',r=>r.residential_units],['commercial_units',r=>r.commercial_units],['total_units',r=>r.total_units],['building_class_category',r=>r.building_class_category],['building_class_at_present',r=>r.building_class_at_present],['building_class_at_time_of_sale',r=>r.building_class_at_time_of_sale],['bbl',r=>r._bbl]];
+ const cols=[['sale_date',r=>String(r._date||'').slice(0,10)],['address',r=>r.address],['borough',r=>r.borough],['neighborhood',r=>r.neighborhood],['sale_price',r=>r._price],['gross_square_feet',r=>r._sf],['price_per_gross_sf',r=>r._price/r._sf],['land_square_feet',r=>r.land_square_feet],['year_built',r=>r.year_built],['residential_units',r=>r.residential_units],['commercial_units',r=>r.commercial_units],['total_units',r=>r.total_units],['building_class_category',r=>r.building_class_category],['building_class_at_present',r=>r.building_class_at_present],['building_class_at_time_of_sale',r=>r.building_class_at_time_of],['bbl',r=>r._bbl]];
  const csv=[cols.map(c=>c[0]),...currentSales.map(r=>cols.map(c=>c[1](r)))].map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');
  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');
  a.href=url;a.download='nyc-property-comps.csv';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
