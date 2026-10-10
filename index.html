@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101820"><title>NYC Property Intelligence</title>
+<style>
+:root{--bg:#0b1117;--panel:#121c25;--panel2:#17232e;--line:#293844;--text:#f2f5f7;--muted:#9eafb9;--gold:#d9b66f;--green:#75c6a3;--red:#ef8f8f;--blue:#8ab9e8}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top right,#172634 0,#0b1117 48%);color:var(--text);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,select{font:inherit}button{cursor:pointer}.wrap{max-width:1200px;margin:auto;padding:22px 16px 56px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding:8px 0 20px}.brand{display:flex;gap:12px;align-items:center}.mark{width:42px;height:42px;border-radius:12px;background:linear-gradient(145deg,#f0d494,#a47d39);display:grid;place-items:center;color:#101820;font-weight:900;font-size:21px}.eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:700}.brand h1{font-size:21px;margin:0;letter-spacing:-.035em}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}.pill{border:1px solid #365043;background:#14261f;color:#a4e0c3;border-radius:30px;padding:7px 11px;font-size:12px}.hero{padding:28px 0 22px}.hero h2{font-size:clamp(27px,5vw,42px);line-height:1.1;letter-spacing:-.04em;max-width:700px;margin:0 0 12px}.hero p{color:var(--muted);max-width:720px;margin:0}.searchbox{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:17px;margin:10px 0 18px}.searchrow{display:grid;grid-template-columns:2fr 1fr auto;gap:10px}.field label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.09em;margin:0 0 6px}.field input,.field select{width:100%;background:#0b131a;border:1px solid #31424e;color:var(--text);padding:12px;border-radius:9px;outline:none;min-width:0}.field input:focus,.field select:focus{border-color:var(--gold)}.primary{border:0;border-radius:9px;padding:12px 18px;background:var(--gold);color:#151a1d;font-weight:800;align-self:end;white-space:nowrap}.primary:disabled{opacity:.6;cursor:wait}.hint{color:var(--muted);font-size:12px;margin:10px 2px 0}.notice{border:1px solid #594b2d;background:#211d14;color:#e6d4a9;border-radius:10px;padding:11px 13px;font-size:12px;margin:12px 0 20px}.status{font-size:13px;color:var(--muted);min-height:20px;margin:8px 2px}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:14px 0}.metric,.card{background:var(--panel);border:1px solid var(--line);border-radius:14px}.metric{padding:16px;min-height:106px}.metric .label{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}.metric .value{font-size:clamp(20px,3vw,28px);font-weight:750;letter-spacing:-.035em;margin-top:8px;overflow-wrap:anywhere}.metric .sub{color:var(--muted);font-size:11px;margin-top:4px}.section{margin-top:24px}.sectionhead{display:flex;justify-content:space-between;gap:12px;align-items:end;flex-wrap:wrap;margin-bottom:10px}.sectionhead h3{font-size:18px;margin:0;letter-spacing:-.02em}.sectionhead p{color:var(--muted);font-size:12px;margin:2px 0 0}.card{padding:16px}.detailgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.detail{border-bottom:1px solid var(--line);padding:8px 0}.detail .k{font-size:11px;color:var(--muted)}.detail .v{font-weight:650;overflow-wrap:anywhere}.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:12px;background:var(--panel)}table{border-collapse:collapse;width:100%;min-width:720px;font-size:12px}th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);white-space:nowrap}th{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:#17232e;position:sticky;top:0}tr:last-child td{border-bottom:0}.empty{color:var(--muted);padding:20px;text-align:center}.split{display:grid;grid-template-columns:1.1fr .9fr;gap:14px}.inputs3{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.calcresult{font-size:28px;font-weight:800;letter-spacing:-.03em;margin:10px 0}.fine{color:var(--muted);font-size:11px}.source{display:inline-block;border:1px solid var(--line);border-radius:5px;padding:2px 6px;color:var(--muted);font-size:10px}.footer{border-top:1px solid var(--line);margin-top:34px;padding-top:16px;color:var(--muted);font-size:11px;display:flex;gap:12px;justify-content:space-between;flex-wrap:wrap}a{color:var(--blue)}.hide{display:none!important}
+@media(max-width:760px){.searchrow{grid-template-columns:1fr}.primary{width:100%}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.detailgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.split{grid-template-columns:1fr}.hero{padding-top:23px}.wrap{padding-left:12px;padding-right:12px}.brand h1{font-size:18px}}
+</style>
+</head>
+<body><main class="wrap">
+<header class="top"><div class="brand"><div class="mark">NY</div><div><div class="eyebrow">Research terminal</div><h1>NYC Property Intelligence</h1><p>Property research · Comparable sales · Development screening</p></div></div><div class="pill">● Live public-data connections</div></header>
+<section class="hero"><h2>Underwrite the property.<br><span style="color:var(--gold)">Not the sales pitch.</span></h2><p>Look up a New York City property, inspect public building and zoning attributes, review recorded sale transactions, and run a transparent first-pass development screen.</p></section>
+<section class="searchbox"><form id="searchForm"><div class="searchrow"><div class="field"><label for="address">Property address or BBL</label><input id="address" placeholder="e.g. 656 Eastern Parkway, Brooklyn or 3012700019" autocomplete="street-address" required></div><div class="field"><label for="borough">Borough (for sales search)</label><select id="borough"><option value="">Auto / all boroughs</option><option>BROOKLYN</option><option>MANHATTAN</option><option>QUEENS</option><option>BRONX</option><option>STATEN ISLAND</option></select></div><button class="primary" id="searchBtn">Research property ↗</button></div><div class="hint">Searches NYC PLUTO building/lot records and the NYC Rolling Sales dataset. Address matching can require a borough or a BBL for reliable identification.</div></form><div class="status" id="status" aria-live="polite"></div></section>
+<div class="notice">Diligence standard: public-data screening only. A missing record is not proof that a condition does not exist. Verify title, DOB/HPD records, zoning applicability, survey, legal occupancy, and transaction documents before relying on an acquisition or development conclusion.</div>
+<section id="results" class="hide">
+<div class="sectionhead"><div><h3>Property snapshot</h3><p>Attributes returned by the public dataset — not independently certified.</p></div><span class="source">NYC PLUTO</span></div>
+<div class="grid"><div class="metric"><div class="label">Lot area</div><div class="value" id="lotArea">—</div><div class="sub">square feet</div></div><div class="metric"><div class="label">Building area</div><div class="value" id="bldgArea">—</div><div class="sub">reported gross square feet</div></div><div class="metric"><div class="label">Reported floors</div><div class="value" id="floors">—</div><div class="sub">existing building</div></div><div class="metric"><div class="label">Built FAR</div><div class="value" id="builtFar">—</div><div class="sub">reported built floor area ratio</div></div></div>
+<div class="card"><div class="detailgrid" id="propertyDetails"></div><div class="fine" style="margin-top:12px" id="propertySource"></div></div>
+<section class="section"><div class="sectionhead"><div><h3>Comparable sale screen</h3><p>Recent recorded transactions with price and reported gross building area; filtered for approximate size where available.</p></div><span class="source">NYC Rolling Sales</span></div><div class="grid"><div class="metric"><div class="label">Transactions shown</div><div class="value" id="compCount">—</div><div class="sub">after screening filters</div></div><div class="metric"><div class="label">Median $ / SF</div><div class="value" id="medianPsf">—</div><div class="sub">not an appraisal</div></div><div class="metric"><div class="label">Median sale price</div><div class="value" id="medianPrice">—</div><div class="sub">reported sale price</div></div><div class="metric"><div class="label">Data window</div><div class="value" style="font-size:18px" id="dataWindow">—</div><div class="sub">dates among displayed records</div></div></div><div class="tablewrap" id="compsTable"><div class="empty">Run a property search to load comparable transactions.</div></div><p class="fine">Transactions are screened from available public fields; this is not a verified arm’s-length comp set. Property type, condition, unit mix, concessions, and legal area may differ. Outliers and transfers requiring exclusion must be reviewed manually.</p></section>
+<section class="section"><div class="sectionhead"><div><h3>Development residual land value — quick screen</h3><p>Enter your own assumptions. This is a simplified feasibility calculation, not a construction budget or financing quote.</p></div></div><div class="split"><div class="card"><div class="inputs3"><div class="field"><label for="sellable">Sellable / rentable area (SF)</label><input id="sellable" type="number" min="0" placeholder="e.g. 18000"></div><div class="field"><label for="revenue">Value per SF ($)</label><input id="revenue" type="number" min="0" placeholder="e.g. 900"></div><div class="field"><label for="hard">Hard cost ($ / SF)</label><input id="hard" type="number" min="0" placeholder="e.g. 350"></div><div class="field"><label for="soft">Soft costs (% of hard)</label><input id="soft" type="number" min="0" value="25"></div><div class="field"><label for="finance">Financing & carry ($)</label><input id="finance" type="number" min="0" placeholder="e.g. 1200000"></div><div class="field"><label for="other">Other costs + contingency ($)</label><input id="other" type="number" min="0" placeholder="e.g. 800000"></div><div class="field"><label for="profit">Target developer profit (% of revenue)</label><input id="profit" type="number" min="0" value="15"></div><div class="field"><label for="acq">Acquisition / closing costs ($)</label><input id="acq" type="number" min="0" placeholder="e.g. 500000"></div></div><button class="primary" style="margin-top:14px;width:100%" id="calcBtn" type="button">Calculate residual land value</button></div><div class="card"><div class="eyebrow">Indicative residual</div><div class="calcresult" id="residual">Enter assumptions</div><p id="residualNote" class="fine">Residual land value = estimated completed value minus hard costs, soft costs, financing/carry, other costs, target profit, and acquisition/closing costs. Results are only as reliable as your inputs.</p><div class="detail" style="margin-top:15px"><div class="k">Estimated completed value</div><div class="v" id="grossValue">—</div></div><div class="detail"><div class="k">Estimated project costs before land</div><div class="v" id="projectCost">—</div></div><div class="detail"><div class="k">Target profit allowance</div><div class="v" id="profitValue">—</div></div></div></div></section>
+</section>
+<div class="footer"><span>NYC Property Intelligence · Preliminary diligence workspace</span><span><a href="https://opendata.cityofnewyork.us/" target="_blank" rel="noopener">NYC Open Data</a> · <a href="https://www.nyc.gov/site/planning/data-maps/open-data/dwn-pluto-mappluto.page" target="_blank" rel="noopener">PLUTO documentation</a></span></div>
+</main>
+<script>
+const API='https://data.cityofnewyork.us/resource/';
+const PLUTO='64uk-42ks', SALES='usep-8jbt';
+const $=id=>document.getElementById(id);
+let currentProperty=null, currentSales=[];
+const fmt=(n,d=0)=>Number.isFinite(Number(n))?Number(n).toLocaleString('en-US',{maximumFractionDigits:d}):'—';
+const money=n=>Number.isFinite(Number(n))?'$'+Math.round(Number(n)).toLocaleString('en-US'):'—';
+const num=v=>{if(v===null||v===undefined||v==='')return NaN;const n=Number(String(v).replace(/[$,]/g,''));return Number.isFinite(n)?n:NaN};
+const esc=s=>String(s??'—').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function cleanAddress(s){return s.trim().replace(/\s+/g,' ').toUpperCase()}
+function quote(s){return String(s).replace(/'/g,"''")}
+async function api(id,params){const url=new URL(API+id+'.json');Object.entries(params).forEach(([k,v])=>url.searchParams.set(k,v));const r=await fetch(url.toString(),{headers:{Accept:'application/json'}});if(!r.ok)throw new Error('NYC Open Data returned HTTP '+r.status+' for dataset '+id+'.');return r.json()}
+function bblFromRow(r){if(r.bbl)return String(r.bbl).padStart(10,'0');const boro=String(r.borough||r.boro||'');const map={'MANHATTAN':'1','BRONX':'2','BROOKLYN':'3','QUEENS':'4','STATEN ISLAND':'5'};const n=map[boro.toUpperCase()]||boro; if(n&&r.block!==undefined&&r.lot!==undefined)return n+String(r.block).padStart(5,'0')+String(r.lot).padStart(4,'0');return ''}
+function detail(k,v){return '<div class="detail"><div class="k">'+esc(k)+'</div><div class="v">'+esc(v??'—')+'</div></div>'}
+function pick(r,keys){for(const k of keys)if(r[k]!==undefined&&r[k]!==null&&r[k]!=='')return r[k];return null}
+async function findProperty(term,borough){
+ const isBBL=/^\d{10}$/.test(term.replace(/\D/g,''));const bbl=term.replace(/\D/g,'');
+ if(isBBL){const a=await api(PLUTO,{$where:"bbl='"+quote(bbl)+"'",'$limit':10});if(a.length)return a;}
+ const addr=cleanAddress(term).replace(/[^A-Z0-9 ]/g,'').trim();
+ const candidates=[];
+ const where="upper(address) like '%"+quote(addr)+"%'";
+ const p={ '$where':where,'$limit':20,'$order':'bbl'};
+ if(borough)p['$where']+=" AND borough='"+quote(borough)+"'";
+ try{const a=await api(PLUTO,p);candidates.push(...a)}catch(e){throw e}
+ if(!candidates.length && borough){const a=await api(PLUTO,{'$where':"upper(address) like '%"+quote(addr)+"%' AND borough='"+quote(borough)+"'",'$limit':20});candidates.push(...a)}
+ return candidates;
+}
+function showProperty(p){
+ currentProperty=p;$('results').classList.remove('hide');
+ $('lotArea').textContent=fmt(p.lotarea);$('bldgArea').textContent=fmt(p.bldgarea);$('floors').textContent=fmt(p.numfloors,1);$('builtFar').textContent=fmt(p.builtfar,2);
+ const bbl=pick(p,['bbl'])||'—';const address=pick(p,['address'])||'Address not reported';const borough=pick(p,['borough','boro'])||'—';
+ $('propertyDetails').innerHTML=[
+ detail('Address',address),detail('Borough',borough),detail('BBL',bbl),detail('ZIP code',pick(p,['zipcode'])||'—'),detail('Zoning district',pick(p,['zonedist1'])||'Not reported'),detail('Zoning overlay',pick(p,['overlay1'])||'None reported in this record'),detail('Special district',pick(p,['spdist1'])||'None reported in this record'),detail('Residential FAR',pick(p,['residfar'])??'—'),detail('Commercial FAR',pick(p,['commfar'])??'—'),detail('Residential units',pick(p,['unitsres'])??'—'),detail('Total units',pick(p,['unitstotal'])??'—'),detail('Year built',pick(p,['yearbuilt'])||'—')
+ ].join('');
+ $('propertySource').innerHTML='Dataset: <a href="https://data.cityofnewyork.us/Housing-Development/PLUTO/64uk-42ks" target="_blank" rel="noopener">NYC PLUTO / MapPLUTO</a>. Field values are shown as returned. A blank or “none reported” is not independent confirmation that no restriction or condition exists.';
+}
+const median=a=>{const v=a.filter(Number.isFinite).sort((x,y)=>x-y);if(!v.length)return NaN;const m=Math.floor(v.length/2);return v.length%2?v[m]:(v[m-1]+v[m])/2};
+function renderSales(rows,p){
+ const propArea=num(p.bldgarea);const propBbl=String(p.bbl||'');const borough=String(p.borough||p.boro||'').toUpperCase();
+ const sales=rows.map(r=>({...r,_price:num(r.sale_price),_sf:num(r.gross_square_feet),_date:r.sale_date,_bbl:bblFromRow(r)}))
+ .filter(r=>r._price>1000&&r._sf>100&&r._date&&r._bbl!==propBbl);
+ let comps=sales.filter(r=>!Number.isFinite(propArea)||propArea<=0||(r._sf>=propArea*.5&&r._sf<=propArea*2));
+ const propN=String(p.neighborhood||'').toUpperCase();
+ if(propN){const same=comps.filter(r=>String(r.neighborhood||'').toUpperCase()===propN);if(same.length>=3)comps=same}
+ comps.sort((a,b)=>String(b._date).localeCompare(String(a._date)));comps=comps.slice(0,50);currentSales=comps;
+ const psf=comps.map(r=>r._price/r._sf);$('compCount').textContent=fmt(comps.length);$('medianPsf').textContent=Number.isFinite(median(psf))?money(median(psf)):'—';$('medianPrice').textContent=Number.isFinite(median(comps.map(r=>r._price)))?money(median(comps.map(r=>r._price))):'—';
+ const dates=comps.map(r=>String(r._date).slice(0,10)).filter(Boolean).sort();$('dataWindow').textContent=dates.length?dates[0]+' → '+dates[dates.length-1]:'No records';
+ if(!comps.length){$('compsTable').innerHTML='<div class="empty">No comparable transactions passed the available screening filters. Try a borough selection, another address/BBL, or review the dataset directly.</div>';return}
+ $('compsTable').innerHTML='<table><thead><tr><th>Sale date</th><th>Address</th><th>Neighborhood</th><th>Sale price</th><th>Gross SF</th><th>$/SF</th><th>Class</th><th>BBL</th></tr></thead><tbody>'+comps.map(r=>'<tr><td>'+esc(String(r._date).slice(0,10))+'</td><td>'+esc(r.address)+'</td><td>'+esc(r.neighborhood)+'</td><td>'+money(r._price)+'</td><td>'+fmt(r._sf)+'</td><td>'+money(r._price/r._sf)+'</td><td>'+esc(r.building_class_category||r.building_class_at_time_of_sale||'—')+'</td><td>'+esc(r._bbl||'—')+'</td></tr>').join('')+'</tbody></table>';
+}
+async function findSales(p,boroughChoice){
+ let borough=String(boroughChoice||p.borough||p.boro||'').toUpperCase();
+ const boroMap={'1':'MANHATTAN','2':'BRONX','3':'BROOKLYN','4':'QUEENS','5':'STATEN ISLAND'};
+ if(boroMap[borough])borough=boroMap[borough];
+ let where="sale_price > '0' AND gross_square_feet > '100'";
+ if(borough)where+=" AND borough='"+quote(borough)+"'";
+ const rows=await api(SALES,{'$where':where,'$select':'borough,neighborhood,building_class_category,building_class_at_time_of_sale,block,lot,address,zip_code,gross_square_feet,sale_price,sale_date','$order':'sale_date DESC','$limit':2000});
+ renderSales(rows,p);
+}
+$('searchForm').addEventListener('submit',async e=>{
+ e.preventDefault();const term=$('address').value.trim();if(!term)return;
+ $('searchBtn').disabled=true;$('searchBtn').textContent='Searching…';$('status').textContent='Querying NYC public datasets…';$('results').classList.add('hide');
+ try{
+  const props=await findProperty(term,$('borough').value);
+  if(!props.length)throw new Error('No matching PLUTO record was found. Try the full street address with borough, or the 10-digit BBL. A failed match does not mean the property is absent from city records.');
+  const p=props[0];showProperty(p);
+  $('status').textContent=props.length>1?'Multiple PLUTO matches found ('+props.length+'); displaying the first returned match. Confirm the BBL before relying on the result.':'Property record loaded. Confirm the address and BBL below before proceeding.';
+  await findSales(p,$('borough').value);
+ }catch(err){$('status').textContent=err.message||'The search failed.';if(!$('results').classList.contains('hide'))$('compsTable').innerHTML='<div class="empty">'+esc(err.message)+'</div>'}
+ finally{$('searchBtn').disabled=false;$('searchBtn').textContent='Research property ↗'}
+});
+$('calcBtn').addEventListener('click',()=>{
+ const area=num($('sellable').value),rev=num($('revenue').value),hardRate=num($('hard').value),softPct=num($('soft').value),finance=num($('finance').value)||0,other=num($('other').value)||0,profitPct=num($('profit').value),acq=num($('acq').value)||0;
+ if(!(area>0&&rev>=0&&hardRate>=0&&softPct>=0&&profitPct>=0)){ $('residual').textContent='Check inputs';$('residualNote').textContent='Enter positive area and non-negative values for all cost and value assumptions.';return}
+ const gross=area*rev,hard=area*hardRate,soft=hard*softPct/100,profit=gross*profitPct/100,costs=hard+soft+finance+other+acq,residual=gross-costs-profit;
+ $('grossValue').textContent=money(gross);$('projectCost').textContent=money(costs);$('profitValue').textContent=money(profit);$('residual').textContent=money(residual);$('residual').style.color=residual>=0?'var(--green)':'var(--red)';
+ $('residualNote').textContent=residual>=0?'Indicative residual before any omitted items. This is not a bid price; verify zoning capacity, usable area, all costs, taxes, timing, and financing.':'Under these assumptions, estimated costs plus target profit exceed completed value. Recheck assumptions; do not treat this result as a land offer.';
+});
+</script></body></html>
