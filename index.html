@@ -34,26 +34,45 @@ const num=v=>{if(v===null||v===undefined||v==='')return NaN;const n=Number(Strin
 const esc=s=>String(s??'—').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function cleanAddress(s){return s.trim().replace(/\s+/g,' ').toUpperCase()}
 function quote(s){return String(s).replace(/'/g,"''")}
-async function api(id,params){const url=new URL(API+id+'.json');Object.entries(params).forEach(([k,v])=>url.searchParams.set(k,v));const r=await fetch(url.toString(),{headers:{Accept:'application/json'}});if(!r.ok)throw new Error('NYC Open Data returned HTTP '+r.status+' for dataset '+id+'.');return r.json()}
-function bblFromRow(r){if(r.bbl)return String(r.bbl).padStart(10,'0');const boro=String(r.borough||r.boro||'');const map={'MANHATTAN':'1','BRONX':'2','BROOKLYN':'3','QUEENS':'4','STATEN ISLAND':'5'};const n=map[boro.toUpperCase()]||boro; if(n&&r.block!==undefined&&r.lot!==undefined)return n+String(r.block).padStart(5,'0')+String(r.lot).padStart(4,'0');return ''}
+async function api(id,params){const url=new URL(API+id+'.json');Object.entries(params).forEach(([k,v])=>url.searchParams.set(k,v));const r=await fetch(url.toString(),{headers:{Accept:'application/json'}});if(!r.ok){let detail='';try{detail=(await r.text()).slice(0,240)}catch{}throw new Error('NYC Open Data request failed (HTTP '+r.status+'). '+detail+' Please try again in a moment.')}return r.json()}
+const BOROUGH_CODE={'MANHATTAN':'MN','BRONX':'BX','BROOKLYN':'BK','QUEENS':'QN','STATEN ISLAND':'SI','MN':'MN','BX':'BX','BK':'BK','QN':'QN','SI':'SI','1':'MN','2':'BX','3':'BK','4':'QN','5':'SI'};
+const BOROUGH_NAME={MN:'MANHATTAN',BX:'BRONX',BK:'BROOKLYN',QN:'QUEENS',SI:'STATEN ISLAND'};
+function bblFromRow(r){if(r.bbl)return String(r.bbl).padStart(10,'0');const boro=String(r.borough||r.boro||'');const map={'MANHATTAN':'1','BRONX':'2','BROOKLYN':'3','QUEENS':'4','STATEN ISLAND':'5','MN':'1','BX':'2','BK':'3','QN':'4','SI':'5'};const n=map[boro.toUpperCase()]||boro; if(n&&r.block!==undefined&&r.lot!==undefined)return n+String(r.block).padStart(5,'0')+String(r.lot).padStart(4,'0');return ''}
 function detail(k,v){return '<div class="detail"><div class="k">'+esc(k)+'</div><div class="v">'+esc(v??'—')+'</div></div>'}
 function pick(r,keys){for(const k of keys)if(r[k]!==undefined&&r[k]!==null&&r[k]!=='')return r[k];return null}
 async function findProperty(term,borough){
- const isBBL=/^\d{10}$/.test(term.replace(/\D/g,''));const bbl=term.replace(/\D/g,'');
- if(isBBL){const a=await api(PLUTO,{$where:"bbl='"+quote(bbl)+"'",'$limit':10});if(a.length)return a;}
- const addr=cleanAddress(term).replace(/[^A-Z0-9 ]/g,'').trim();
- const candidates=[];
- const where="upper(address) like '%"+quote(addr)+"%'";
- const p={ '$where':where,'$limit':20,'$order':'bbl'};
- if(borough)p['$where']+=" AND borough='"+quote(borough)+"'";
- try{const a=await api(PLUTO,p);candidates.push(...a)}catch(e){throw e}
- if(!candidates.length && borough){const a=await api(PLUTO,{'$where':"upper(address) like '%"+quote(addr)+"%' AND borough='"+quote(borough)+"'",'$limit':20});candidates.push(...a)}
- return candidates;
+ const digits=term.replace(/\D/g,'');const isBBL=/^\d{10}$/.test(digits);
+ if(isBBL){const a=await api(PLUTO,{'$where':'bbl='+digits,'$limit':10});if(a.length)return a;return [];}
+ const addr=cleanAddress(term).replace(/[^A-Z0-9 -]/g,' ').replace(/\s+/g,' ').trim();
+ const boroughCode=borough?BOROUGH_CODE[borough.toUpperCase()]||borough.toUpperCase():'';
+ const variants=[addr];
+ const suffixes=[['PARKWAY','PKWY'],['AVENUE','AVE'],['STREET','ST'],['BOULEVARD','BLVD'],['ROAD','RD'],['DRIVE','DR'],['PLACE','PL'],['TERRACE','TER'],['LANE','LN'],['COURT','CT'],['HIGHWAY','HWY'],['TURNPIKE','TPKE']];
+ for(const [full,short] of suffixes){if(addr.endsWith(' '+full))variants.push(addr.slice(0,-full.length)+short);}
+ const seen=new Set();
+ for(const variant of variants){
+   if(seen.has(variant))continue;seen.add(variant);
+   const clauses=["address like '%"+quote(variant)+"%'"];
+   if(boroughCode)clauses.push("borough='"+quote(boroughCode)+"'");
+   const rows=await api(PLUTO,{'$where':clauses.join(' AND '),'$limit':20,'$order':'bbl'});
+   if(rows.length)return rows;
+ }
+ // If the complete phrase was not found, use the house number plus a distinctive street-name token.
+ const m=addr.match(/^(\d+[A-Z-]*)\s+(.+)$/);
+ if(m){
+   const tokens=m[2].split(/\s+/).filter(t=>t.length>2&&!['THE','OF','AND'].includes(t));
+   for(const token of tokens){
+     const clauses=["address like '%"+quote(m[1])+"%'","address like '%"+quote(token)+"%'"];
+     if(boroughCode)clauses.push("borough='"+quote(boroughCode)+"'");
+     const rows=await api(PLUTO,{'$where':clauses.join(' AND '),'$limit':20,'$order':'bbl'});
+     if(rows.length)return rows;
+   }
+ }
+ return [];
 }
 function showProperty(p){
  currentProperty=p;$('results').classList.remove('hide');
  $('lotArea').textContent=fmt(p.lotarea);$('bldgArea').textContent=fmt(p.bldgarea);$('floors').textContent=fmt(p.numfloors,1);$('builtFar').textContent=fmt(p.builtfar,2);
- const bbl=pick(p,['bbl'])||'—';const address=pick(p,['address'])||'Address not reported';const borough=pick(p,['borough','boro'])||'—';
+ const bbl=pick(p,['bbl'])||'—';const address=pick(p,['address'])||'Address not reported';const rawBorough=String(pick(p,['borough','boro'])||'');const borough=BOROUGH_NAME[rawBorough.toUpperCase()]||rawBorough||'—';
  $('propertyDetails').innerHTML=[
  detail('Address',address),detail('Borough',borough),detail('BBL',bbl),detail('ZIP code',pick(p,['zipcode'])||'—'),detail('Zoning district',pick(p,['zonedist1'])||'Not reported'),detail('Zoning overlay',pick(p,['overlay1'])||'None reported in this record'),detail('Special district',pick(p,['spdist1'])||'None reported in this record'),detail('Residential FAR',pick(p,['residfar'])??'—'),detail('Commercial FAR',pick(p,['commfar'])??'—'),detail('Residential units',pick(p,['unitsres'])??'—'),detail('Total units',pick(p,['unitstotal'])??'—'),detail('Year built',pick(p,['yearbuilt'])||'—')
  ].join('');
@@ -75,7 +94,7 @@ function renderSales(rows,p){
 }
 async function findSales(p,boroughChoice){
  let borough=String(boroughChoice||p.borough||p.boro||'').toUpperCase();
- const boroMap={'1':'MANHATTAN','2':'BRONX','3':'BROOKLYN','4':'QUEENS','5':'STATEN ISLAND'};
+ const boroMap={'1':'MANHATTAN','2':'BRONX','3':'BROOKLYN','4':'QUEENS','5':'STATEN ISLAND','MN':'MANHATTAN','BX':'BRONX','BK':'BROOKLYN','QN':'QUEENS','SI':'STATEN ISLAND'};
  if(boroMap[borough])borough=boroMap[borough];
  let where="sale_price > '0' AND gross_square_feet > '100'";
  if(borough)where+=" AND borough='"+quote(borough)+"'";
